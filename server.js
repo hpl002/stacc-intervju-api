@@ -10,15 +10,14 @@ function handleError(res, reason, message, code) {
     console.log("ERROR: " + reason);
     res.status(code || 500).json({"error": message});
   }
- 
+
+  // define a simple route
   app.get("/api", function(req, res) {
     res.status(200).json({"error": 'get registered'});
   });
 
- 
-  
-  app.post("/api", function(req, res) {
-    if (2==1) {
+    app.post("/api", function(req, res) {
+    if (!req.body.laanebelop) {
       handleError(res, "Invalid user input", "All fields must contain data", 400);
     } else {
         res.status(200).json({
@@ -46,5 +45,12 @@ function handleError(res, reason, message, code) {
           );
     }
   });
+
+/*
+   
+ app.listen(5001, () => {
+    console.log("Server is listening on port 5001");
+});
+ */
+
   
- 
