@@ -12,19 +12,13 @@ function handleError(res, reason, message, code) {
   }
  
   app.get("/api", function(req, res) {
-    db.collection(CONTACTS_COLLECTION).find({}).toArray(function(err, docs) {
-      if (err) {
-        handleError(res, err.message, "Failed to get contacts.");
-      } else {
-        res.status(200).json(docs);
-      }
-    });
+    res.status(200).json({"error": 'get registered'});
   });
 
  
   
   app.post("/api", function(req, res) {
-    if (!req.body.laanebelop || req.body.nominellRente || req.body.terminGebyr || req.body.utlopsDato || req.body.saldoDato || req.body.datoForsteInnbetaling || req.body.ukjentVerdi) {
+    if (2==1) {
       handleError(res, "Invalid user input", "All fields must contain data", 400);
     } else {
         res.status(200).json({
