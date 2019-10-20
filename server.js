@@ -56,14 +56,14 @@ function handleError(res, reason, message, code) {
 
    
 
-  for (i = 1; i <= (240); i++) {
-    betalt+=pBody.total
-    vTemp.restgjeld=parseInt(pBody.laanebelop-betalt);
-    vTemp.dato=increaseDate(pBody.datoForsteInnbetaling)
-    vTemp.innbetaling=terminbelop(gResult[i-1],pBody.nominellRente,pAr)-rente(parseInt(pBody.laanebelop-betalt),pBody.nominellRente)
+  for (i = 1; i <= (pAr); i++) {
+    betalt+=pBody.laanebelop-terminbelop(gResult[i-1],pBody.nominellRente,pAr)
+    vTemp.restgjeld=parseInt(pBody.laanebelop)-betalt;
+    vTemp.dato=increaseDate(gResult[i-1].nedbetalingsplan.innbetalinger.dato)
+    vTemp.innbetaling=terminbelop(gResult[i-1].nedbetalingsplan.innbetalinger.restgjeld,pBody.nominellRente,pAr)-rente(parseInt(pBody.laanebelop)-betalt,pBody.nominellRente)
     vTemp.gebyr=pBody.terminGebyr;
     vTemp.renter=rente(parseInt(pBody.laanebelop-betalt),pBody.nominellRente)
-    vTemp.total=terminbelop(gResult[i-1],pBody.nominellRente,pAr);
+    vTemp.total=terminbelop(gResult[i-1].nedbetalingsplan.innbetalinger.restgjeld,pBody.nominellRente,pAr);
     gResult.nedbetalingsplan.innbetalinger.push(vTemp)
   }
   return gResult
@@ -98,7 +98,7 @@ var vResult;
 
  
 
-   const port = process.env.PORT || 6003;
+   const port = process.env.PORT || 6012;
 
    app.listen(port, () => {
     console.log("Server is listening on port 8000");
