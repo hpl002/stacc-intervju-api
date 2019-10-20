@@ -98,7 +98,7 @@ var vResult;
 
  
 
-   const port = process.env.PORT || 6012;
+   const port = process.env.PORT || 8000;
 
    app.listen(port, () => {
     console.log("Server is listening on port 8000");
