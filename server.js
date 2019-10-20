@@ -28,10 +28,48 @@ function handleError(res, reason, message, code) {
   });
 
   /*Beregne lån - test */
-  
-  
-  
-  function rente(pResterendeGjeld,pRente){
+    function nedbetalingsplan(pBody){
+    var gResult={
+        "nedbetalingsplan": {
+          "innbetalinger": []
+            }
+        }
+    var vTemp={
+        "restgjeld": null,
+        "dato": null,
+        "innbetaling": null,
+        "gebyr": null,
+        "renter": null,
+        "total": null
+
+    }
+    var betalt;
+    var pAr=parseInt(pBody.utlopsDato.slice(0.4)-pBody.datoForsteInnbetaling.slice(0.4))
+
+    vTemp.restgjeld=pBody.laanebelop
+    vTemp.dato=pBody.datoForsteInnbetaling
+    vTemp.innbetaling=0.0
+    vTemp.gebyr=0.0
+    vTemp.renter=0.0
+    vTemp.total=0.0
+    gResult.nedbetalingsplan.innbetalinger.push(vTemp)
+
+   
+
+  for (i = 1; i <= (240); i++) {
+    betalt+=pBody.total
+    vTemp.restgjeld=parseInt(pBody.laanebelop-betalt);
+    vTemp.dato=increaseDate(pBody.datoForsteInnbetaling)
+    vTemp.innbetaling=terminbelop(gResult[i-1],pBody.nominellRente,pAr)-rente(parseInt(pBody.laanebelop-betalt),pBody.nominellRente)
+    vTemp.gebyr=pBody.terminGebyr;
+    vTemp.renter=rente(parseInt(pBody.laanebelop-betalt),pBody.nominellRente)
+    vTemp.total=terminbelop(gResult[i-1],pBody.nominellRente,pAr);
+    gResult.nedbetalingsplan.innbetalinger.push(vTemp)
+  }
+  return gResult
+   }
+
+   function rente(pResterendeGjeld,pRente){
     return (pResterendeGjeld*(pRente/100)/12)
   }
   
@@ -57,47 +95,10 @@ var vResult;
         return vResult = (year)+'-'+'01'+'-'+day
     }
         }
-   
-  
-  function nedbetalingsplan(pBody){
-    var gResult={
-        "nedbetalingsplan": {
-          "innbetalinger": []
-            }
-        }
-    var vTemp={
-        "restgjeld": null,
-        "dato": null,
-        "innbetaling": null,
-        "gebyr": null,
-        "renter": null,
-        "total": null
-
-    }
-
-    vTemp.restgjeld=pBody.
-    vTemp.dato=increaseDate()
-    vTemp.innbetaling=i;
-    vTemp.gebyr=i;
-    vTemp.renter=i;
-    vTemp.total=i;
-    gResult.nedbetalingsplan.innbetalinger.push(vTemp)
-
-  for (i = 0; i <= pTerminer; i++) {
-    vTemp.restgjeld=i;
-    vTemp.dato=increaseDate()
-    vTemp.innbetaling=i;
-    vTemp.gebyr=i;
-    vTemp.renter=i;
-    vTemp.total=i;
-    gResult.nedbetalingsplan.innbetalinger.push(vTemp)
-  }
-  return gResult
-   }
 
  
 
-   const port = process.env.PORT || 8000;
+   const port = process.env.PORT || 6003;
 
    app.listen(port, () => {
     console.log("Server is listening on port 8000");
