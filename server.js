@@ -3,6 +3,8 @@ var bodyParser = require("body-parser");
  
  
 var app = express();
+app.use(cors());
+
 app.use(bodyParser.json());
 
 // Generic error handler used by all endpoints.
