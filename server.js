@@ -19,6 +19,8 @@ function handleError(res, reason, message, code) {
     res.status(200).json({"error": 'get registered'});
   });
 
+
+  /*check date format for day and month with leading zero */
     app.post("/api", function(req, res) {
     if (1==2) {
       handleError(res, "Invalid user input", "All fields must contain data", 400);
@@ -34,16 +36,8 @@ function handleError(res, reason, message, code) {
           "innbetalinger": []
             }
         }
-    var vTemp={
-        "restgjeld": null,
-        "dato": null,
-        "innbetaling": null,
-        "gebyr": null,
-        "renter": null,
-        "total": null
-
-    }
-    var betalt;
+    var vTemp={}
+    var akkumulerte_innbetalinger=0;
     var pAr=parseInt(pBody.utlopsDato.slice(0,4)-pBody.datoForsteInnbetaling.slice(0,4))
 
     vTemp.restgjeld=pBody.laanebelop
@@ -57,14 +51,28 @@ function handleError(res, reason, message, code) {
    
 
   for (i = 1; i <= (pAr*12); i++) {
-    betalt+=pBody.laanebelop-terminbelop(gResult[i-1],pBody.nominellRente,pAr)
+    /*Have to declare a local reference to the object, otherwise we are simply rewwriting the same values over and over*/
+    var vTemp={}
+    /*variabel som holder styr på hvor some som er innbetalt
+    betalt+=(terminbelop(gResult.nedbetalingsplan.innbetalinger[i-1].,pBody.nominellRente,pAr) + terminbelop(gResult.nedbetalingsplan.innbetalinger[i-1].,pBody.nominellRente,pAr))
     vTemp.restgjeld=parseInt(pBody.laanebelop)-betalt;
     vTemp.dato=increaseDate(gResult[i-1].nedbetalingsplan.innbetalinger.dato)
-    vTemp.innbetaling=terminbelop(gResult[i-1].nedbetalingsplan.innbetalinger.restgjeld,pBody.nominellRente,pAr)-rente(parseInt(pBody.laanebelop)-betalt,pBody.nominellRente)
+    vTemp.innbetaling=terminbelop(gResult.nedbetalingsplan.innbetalinger.[i-1].restgjeld,pBody.nominellRente,pAr)-rente(parseInt(pBody.laanebelop)-betalt,pBody.nominellRente)
     vTemp.gebyr=pBody.terminGebyr;
     vTemp.renter=rente(parseInt(pBody.laanebelop-betalt),pBody.nominellRente)
     vTemp.total=terminbelop(gResult[i-1].nedbetalingsplan.innbetalinger.restgjeld,pBody.nominellRente,pAr);
     gResult.nedbetalingsplan.innbetalinger.push(vTemp)
+    */
+
+    
+   akkumulerte_innbetalinger+=terminbelop(parseInt(pBody.laanebelop),pBody.nominellRente,pAr)
+   vTemp.restgjeld=parseInt(pBody.laanebelop)-akkumulerte_innbetalinger;
+   vTemp.dato=increaseDate(gResult.nedbetalingsplan.innbetalinger[i-1].dato)
+   vTemp.innbetaling=0
+   vTemp.gebyr=pBody.terminGebyr;
+   vTemp.renter=0
+   vTemp.total=terminbelop(parseInt(pBody.laanebelop),pBody.nominellRente,pAr)
+   gResult.nedbetalingsplan.innbetalinger.push(vTemp)
   }
   return gResult
    }
@@ -84,17 +92,25 @@ function handleError(res, reason, message, code) {
   function increaseDate(pDate){
     year=parseInt(pDate.slice(0,4))
     month=parseInt(pDate.slice(5,7))
-    day=parseInt(pDate.slice(8,10))
+    day=pDate.slice(8)
 var vResult;
-         if(month<12){
-		month++
-        return vResult = year+'-'+(month)+'-'+day
-     }
+        if(month<12){
+        month++
+      }
     else{
-		year++
-        return vResult = (year)+'-'+'01'+'-'+day
-    }
+    year++
+    month = 1
+     }
+     return year+'-'+addLeadingZero(month)+'-'+day
         }
+
+        function addLeadingZero(p){
+          p = p.toString()
+          if(p.length<2){
+          return p.padStart(2,'0')
+          }
+          return p
+          }
 
  
 
