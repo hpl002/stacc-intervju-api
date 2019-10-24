@@ -44,7 +44,7 @@ function handleError(res, reason, message, code) {
 
     }
     var betalt;
-    var pAr=parseInt(pBody.utlopsDato.slice(0.4)-pBody.datoForsteInnbetaling.slice(0.4))
+    var pAr=parseInt(pBody.utlopsDato.slice(0,4)-pBody.datoForsteInnbetaling.slice(0,4))
 
     vTemp.restgjeld=pBody.laanebelop
     vTemp.dato=pBody.datoForsteInnbetaling
@@ -56,7 +56,7 @@ function handleError(res, reason, message, code) {
 
    
 
-  for (i = 1; i <= (pAr); i++) {
+  for (i = 1; i <= (pAr*12); i++) {
     betalt+=pBody.laanebelop-terminbelop(gResult[i-1],pBody.nominellRente,pAr)
     vTemp.restgjeld=parseInt(pBody.laanebelop)-betalt;
     vTemp.dato=increaseDate(gResult[i-1].nedbetalingsplan.innbetalinger.dato)
