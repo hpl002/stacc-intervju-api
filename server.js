@@ -65,13 +65,13 @@ function handleError(res, reason, message, code) {
     */
 
     
-   akkumulerte_innbetalinger+=terminbelop(parseInt(pBody.laanebelop),pBody.nominellRente,pAr)
+   akkumulerte_innbetalinger+=terminbelop(parseInt(pBody.laanebelop),pBody.nominellRente,pAr)-rente(parseInt(pBody.laanebelop)-akkumulerte_innbetalinger,pBody.nominellRente)
    vTemp.restgjeld=parseInt(pBody.laanebelop)-akkumulerte_innbetalinger;
    vTemp.dato=increaseDate(gResult.nedbetalingsplan.innbetalinger[i-1].dato)
-   vTemp.innbetaling=0
+   vTemp.innbetaling=terminbelop(parseInt(pBody.laanebelop),pBody.nominellRente,pAr)-rente(parseInt(pBody.laanebelop)-akkumulerte_innbetalinger,pBody.nominellRente)
    vTemp.gebyr=pBody.terminGebyr;
-   vTemp.renter=0
-   vTemp.total=terminbelop(parseInt(pBody.laanebelop),pBody.nominellRente,pAr)
+   vTemp.renter=rente(parseInt(pBody.laanebelop)-akkumulerte_innbetalinger,pBody.nominellRente)
+   vTemp.total=terminbelop(parseInt(pBody.laanebelop),pBody.nominellRente,pAr)+pBody.terminGebyr
    gResult.nedbetalingsplan.innbetalinger.push(vTemp)
   }
   return gResult
